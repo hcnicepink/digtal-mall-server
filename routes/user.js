@@ -34,7 +34,7 @@ router.post('/login', (req, res, next) => {
          * 签发 token
          * 分为 header、payload、signature 三部分
          * header: typ(token类型)、alg(使用算法)
-         * payload: iss(发行者)、exp(过期时间)、id(用户id)
+         * payload: iss(发行者)、exp(过期时间)、email(用户email)
          * signature: base64编码 (header + '.' + payload)， 然后加盐加密
          * 参考：https://ninghao.net/blog/2834
          */
@@ -45,7 +45,7 @@ router.post('/login', (req, res, next) => {
         let payload = JSON.stringify({
           iss: 'hcnicepink@163.com',
           exp: (Date.now() + 365 * 24 * 60 * 60 * 1000).toString(),
-          id: doc.id
+          email: doc.email
         })
         let sha512 = crypto.createHash('sha512')
         let signature = sha512
@@ -57,7 +57,7 @@ router.post('/login', (req, res, next) => {
           "status": "0",
           "msg": "Login Success",
           "result": {
-            id: doc.id
+            email: doc.email
           }
         })
       }
