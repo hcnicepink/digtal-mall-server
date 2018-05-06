@@ -56,7 +56,9 @@ router.post('/login', (req, res, next) => {
         res.json({
           "status": "0",
           "msg": "Login Success",
-          "result": null
+          "result": {
+            id: doc.id
+          }
         })
       }
     }
