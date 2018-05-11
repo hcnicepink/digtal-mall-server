@@ -4,7 +4,6 @@ let Goods = require('../models/goods')
 
 router.get('/hot', (req, res, next) => {
   Goods.find({saleNum: {$gte: 9}}, (err, doc) => {
-    console.log(doc)
     if (err) {
       res.json({
         "status": "1",

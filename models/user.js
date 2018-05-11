@@ -8,4 +8,4 @@ let userSchema = new mongoose.Schema({
   "addressList": Array
 })
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('user', userSchema, 'user')

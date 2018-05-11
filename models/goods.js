@@ -9,4 +9,4 @@ let goodsSchema = mongoose.Schema({
   "checked": Boolean
 })
 
-module.exports = mongoose.model('good', goodsSchema)
+module.exports = mongoose.model('goods', goodsSchema, 'goods')

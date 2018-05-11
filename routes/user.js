@@ -5,64 +5,123 @@ let crypto = require('crypto')
 let Buffer = require('buffer')
 let salt = 'hellodigtalmall'
 
+// 登录
 router.post('/login', (req, res, next) => {
   let params = {
     email: req.body.username,
-    pwd: req.body.username
+    pwd: req.body.password
   }
 
-  // 加密密码
-  let [hash1, hash2] = [crypto.createHash('sha512'), crypto.createHash('sha512')]
-  params.pwd = hash2.update((hash1.update(params.pwd).digest('hex') + salt)).digest('hex')
+  if (/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(params.email) && /\w{5,17}$/.test(params.pwd)) {
+    // 加密密码
+    let [hash1, hash2] = [crypto.createHash('sha512'), crypto.createHash('sha512')]
+    params.pwd = hash2.update((hash1.update(params.pwd).digest('hex') + salt)).digest('hex')
 
-  User.findOne(params, (err, doc) => {
-    if (err) {
-      res.json({
-        "status": "1",
-        "msg": err,
-        "result": null
-      })
-    } else {
-      if (doc === null) {
+    User.findOne(params, (err, doc) => {
+      if (err) {
         res.json({
-          "status": "1",
-          "msg": "用户名或密码错误",
-          "result": null
+          code: 500,
+          msg: err,
+          result: null
         })
       } else {
-        /**
-         * 签发 token
-         * 分为 header、payload、signature 三部分
-         * header: typ(token类型)、alg(使用算法)
-         * payload: iss(发行者)、exp(过期时间)、email(用户email)
-         * signature: base64编码 (header + '.' + payload)， 然后加盐加密
-         * 参考：https://ninghao.net/blog/2834
-         */
-        let header = JSON.stringify({
-          alg: 'SHA512',
-          typ: 'JWT'
-        })
-        let payload = JSON.stringify({
-          iss: 'hcnicepink@163.com',
-          exp: (Date.now() + 365 * 24 * 60 * 60 * 1000).toString(),
-          email: doc.email
-        })
-        let sha512 = crypto.createHash('sha512')
-        let signature = sha512
-          .update(Buffer.Buffer.from(header, 'ascii').toString('base64') + '.' + Buffer.Buffer.from(payload, 'ascii').toString('base64') + salt).digest('base64')
-        
-        res.cookie('digtalmall-token', signature, {maxAge: 60 * 60 * 24 * 365})
-
-        res.json({
-          "status": "0",
-          "msg": "Login Success",
-          "result": {
+        if (doc === null) {
+          res.json({
+            code: 201,
+            msg: '用户名或密码错误',
+            result: null
+          })
+        } else {
+          /**
+           * 签发 token
+           * 分为 header、payload、signature 三部分
+           * header: typ(token类型)、alg(使用算法)
+           * payload: iss(发行者)、exp(过期时间)、email(用户email)
+           * signature: base64编码 (header + '.' + payload)， 然后加盐加密
+           * 参考：https://ninghao.net/blog/2834
+           */
+          let header = JSON.stringify({
+            alg: 'SHA512',
+            typ: 'JWT'
+          })
+          let payload = JSON.stringify({
+            iss: 'hcnicepink@163.com',
+            exp: (Date.now() + 365 * 24 * 60 * 60 * 1000).toString(),
             email: doc.email
+          })
+          let sha512 = crypto.createHash('sha512')
+          let signature = sha512
+            .update(Buffer.Buffer.from(header, 'ascii').toString('base64') + '.' + Buffer.Buffer.from(payload, 'ascii').toString('base64') + salt).digest('base64')
+
+          res.cookie('digtalmall-token', signature, { maxAge: 60 * 60 * 24 * 365 })
+
+          res.json({
+            code: 200,
+            msg: '登录成功',
+            result: {
+              email: doc.email
+            }
+          })
+        }
+      }
+    })
+  } else {
+    res.json({
+      code: 201,
+      msg: '用户名或密码错误',
+      result: null
+    })
+  }
+
+})
+
+// 注册
+router.post('/register', (req, res, next) => {
+  let params = {
+    email: req.body.username,
+    pwd: req.body.password,
+    orderList: [],
+    cartList: [],
+    addressList: []
+  }
+
+  if (/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(params.email) && /\w{5,17}$/.test(params.pwd)) {
+    User.findOne({ email: params.email }, (err, doc) => {
+      if (doc) {
+        res.json({
+          code: 201,
+          msg: '用户名已存在',
+          result: null
+        })
+      } else {
+        // 加密密码
+        let [hash1, hash2] = [crypto.createHash('sha512'), crypto.createHash('sha512')]
+        params.pwd = hash2.update((hash1.update(params.pwd).digest('hex') + salt)).digest('hex')
+
+        User.create(params, err => {
+          if (err) {
+            res.json({
+              code: 500,
+              msg: err,
+              result: null
+            })
+          } else {
+            res.json({
+              code: 200,
+              msg: '注册成功',
+              result: null
+            })
           }
         })
       }
-    }
-  })
+    })
+  } else {
+    res.json({
+      code: 202,
+      msg: '请输入符合要求的用户名和密码',
+      result: null
+    })
+  }
 })
 
 module.exports = router
