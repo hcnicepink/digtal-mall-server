@@ -3,7 +3,8 @@ let router = express.Router()
 let User = require('../models/user')
 let crypto = require('crypto')
 let Buffer = require('buffer')
-let salt = 'hellodigtalmall'
+const salt = 'hellodigtalmall'
+const alg = 'sha512'
 
 // 登录
 router.post('/login', (req, res, next) => {
@@ -40,20 +41,20 @@ router.post('/login', (req, res, next) => {
            * signature: base64编码 (header + '.' + payload)， 然后加盐加密
            * 参考：https://ninghao.net/blog/2834
            */
-          let header = JSON.stringify({
-            alg: 'SHA512',
+          let header = Buffer.Buffer.from(JSON.stringify({
+            alg: alg,
             typ: 'JWT'
-          })
-          let payload = JSON.stringify({
+          }), 'ascii').toString('hex')
+          let payload = Buffer.Buffer.from(JSON.stringify({
             iss: 'hcnicepink@163.com',
             exp: (Date.now() + 365 * 24 * 60 * 60 * 1000).toString(),
             email: doc.email
-          })
-          let sha512 = crypto.createHash('sha512')
+          }), 'ascii').toString('hex')
+          let sha512 = crypto.createHash(alg)
           let signature = sha512
-            .update(Buffer.Buffer.from(header, 'ascii').toString('base64') + '.' + Buffer.Buffer.from(payload, 'ascii').toString('base64') + salt).digest('base64')
+            .update(header + '.' + payload + salt).digest('hex')
 
-          res.cookie('digtalmall-token', signature, { maxAge: 60 * 60 * 24 * 365 })
+          res.cookie('digtaltoken', `${header}.${payload}.${signature}`, { maxAge: 60 * 60 * 24 * 365 * 1000 })
 
           res.json({
             code: 200,
@@ -124,4 +125,13 @@ router.post('/register', (req, res, next) => {
   }
 })
 
+// 登出
+router.get('/logout', (req, res, next) => {
+  res.clearCookie('digtaltoken')
+  res.json({
+    code: 200,
+    msg: '退出成功',
+    result: null
+  })
+})
 module.exports = router
