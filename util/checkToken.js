@@ -2,6 +2,7 @@ let Buffer = require('buffer')
 let crypto = require('crypto')
 const salt = 'hellodigtalmall'
 let checkToken = (cookie) => {
+  if (typeof cookie === 'undefined') return false
   let arr = cookie.split('.')
   let header = Buffer.Buffer.from(arr[0], 'hex').toString('ascii')
   let payload = Buffer.Buffer.from(arr[1], 'hex').toString('ascii')

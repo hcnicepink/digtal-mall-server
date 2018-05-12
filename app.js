@@ -4,6 +4,7 @@ let path = require('path')
 let cookieParser = require('cookie-parser')
 let logger = require('morgan')
 let mongoose = require('mongoose')
+let checkToken = require('./util/checkToken')
 
 let indexRouter = require('./routes/index')
 let userRouter = require('./routes/user')
@@ -33,6 +34,22 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+
+app.use((req, res, next) => {
+  if(checkToken(req.cookies.digtaltoken) === false) {
+    if (req.path.indexOf('/user') !== -1 || req.path === '/carousel' || req.path === '/goods/hot') {
+      next()
+    } else {
+      res.json({
+        code: 10001,
+        msg: '您尚未登录',
+        result: null
+      })
+    }
+  } else {
+    next()
+  }
+})
 
 app.use('/', indexRouter)
 app.use('/user', userRouter)

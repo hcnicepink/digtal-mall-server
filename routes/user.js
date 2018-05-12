@@ -3,6 +3,7 @@ let router = express.Router()
 let User = require('../models/user')
 let crypto = require('crypto')
 let Buffer = require('buffer')
+let checkToken = require('../util/checkToken')
 const salt = 'hellodigtalmall'
 const alg = 'sha512'
 
@@ -133,5 +134,23 @@ router.get('/logout', (req, res, next) => {
     msg: '退出成功',
     result: null
   })
+})
+
+// 登录检查
+router.get('/checkLogin', (req, res, next) => {
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '未登录',
+      result: null
+    })
+  } else {
+    res.json({
+      code: 200,
+      msg: '登录中',
+      result: checkResult
+    })
+  }
 })
 module.exports = router
