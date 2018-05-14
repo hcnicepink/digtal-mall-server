@@ -1,0 +1,28 @@
+{
+  "_id": {
+    "$oid": "5af6f9216ebf5f2024b32e5d"
+  },
+  "img": "http://localhost:3000/images/carousel0.jpg",
+  "href": "#"
+}
+{
+  "_id": {
+    "$oid": "5af6fa0c6ebf5f2024b32e5e"
+  },
+  "img": "http://localhost:3000/images/carousel1.jpg",
+  "href": "#"
+}
+{
+  "_id": {
+    "$oid": "5af6fa1e6ebf5f2024b32e5f"
+  },
+  "img": "http://localhost:3000/images/carousel2.png",
+  "href": "#"
+}
+{
+  "_id": {
+    "$oid": "5af6fa396ebf5f2024b32e60"
+  },
+  "img": "http://localhost:3000/images/carousel3.jpg",
+  "href": "#"
+}

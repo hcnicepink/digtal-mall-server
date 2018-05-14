@@ -2,6 +2,7 @@ let mongoose = require('mongoose')
 
 let carouselSchema = mongoose.Schema({
   "img": String,
+  "title": String,
   "href": String
 })
 

@@ -1,0 +1,14 @@
+{
+  "_id": {
+    "$oid": "5af57c2e403c7f1bc820c949"
+  },
+  "email": "792810880@qq.com",
+  "pwd": "e5b82dee41d4f98c772808e78254d60a6ba52d0efd22a8c9987586b5a5c6f6bbd7af0b540df3a82022a95998dee8696d6f6d2cf79cc738a9443e3c2b0f865c97",
+  "phone": "13674859684",
+  "avatar": "http://localhost:3000/images/avatar/user.png",
+  "nickname": "不错步步粉",
+  "gender": 1,
+  "addressList": [],
+  "orderList": [],
+  "cartList": [],
+}

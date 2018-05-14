@@ -1,12 +1,33 @@
 let mongoose = require('mongoose')
 
 let goodsSchema = mongoose.Schema({
-  "name": String,
-  "stock": Number,
-  "image": String,
+  "category": String,
+  "title": String,
+  "subtitle": String,
   "price": Number,
-  "saleNum": Number,
-  "checked": Boolean
+  "promise": String,
+  "spec": String,
+  "name": String,
+  "param": [
+    {
+      "name": String,
+      "detail": String
+    }
+  ],
+  "details_img": String,
+  "shelf_time": Number,
+  "sold_count": Number,
+  "stock": Number,
+  "is_onsale": Boolean,
+  "pic": [
+    {
+      "sm": String,
+      "md": String,
+      "lg": String
+    }
+  ],
+  "discount": Number,
+  "brand": String
 })
 
 module.exports = mongoose.model('goods', goodsSchema, 'goods')

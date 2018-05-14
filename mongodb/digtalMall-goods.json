@@ -1,5 +1,0 @@
-{"_id":{"$oid":"5af116eee002820b411723a3"},"name":"魅蓝EP51蓝牙耳机","stock":10,"image":"http://localhost:3000/images/ep51.png","price":299,"saleNum":10,"checked":false}
-{"_id":{"$oid":"5af11046535076218b2e5b5d"},"name":"魅族蓝牙小音箱","stock":10,"image":"http://localhost:3000/images/lanyayinxiang.png","price":99,"saleNum":10,"checked":false}
-{"_id":{"$oid":"5af1105e535076218b2e5b5e"},"name":"魅蓝 6","stock":10,"image":"http://localhost:3000/images/meilan6.jpg","price":699,"saleNum":10,"checked":false}
-{"_id":{"$oid":"5af1106f535076218b2e5b5f"},"name":"魅蓝 S6","stock":10,"image":"http://localhost:3000/images/meilans6.png","price":799,"saleNum":10,"checked":false}
-{"_id":{"$oid":"5af11099535076218b2e5b60"},"name":"魅族手环","stock":10,"image":"http://localhost:3000/images/shouhuan.png","price":129,"saleNum":10,"checked":false}
