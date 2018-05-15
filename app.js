@@ -8,7 +8,7 @@ let checkToken = require('./util/checkToken')
 
 let indexRouter = require('./routes/index')
 let userRouter = require('./routes/user')
-let goodsRouter = require('./routes/goods')
+let listRouter = require('./routes/list')
 
 let app = express()
 
@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use((req, res, next) => {
   if(checkToken(req.cookies.digtaltoken) === false) {
-    if (req.path.indexOf('/user') !== -1 || req.path === '/carousel' || req.path === '/goods/hot') {
+    if (req.path.indexOf('/user') !== -1 || req.path === '/carousel' || req.path === '/list/hot') {
       next()
     } else {
       res.json({
@@ -53,7 +53,7 @@ app.use((req, res, next) => {
 
 app.use('/', indexRouter)
 app.use('/user', userRouter)
-app.use('/goods', goodsRouter)
+app.use('/list', listRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

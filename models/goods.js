@@ -14,7 +14,7 @@ let goodsSchema = mongoose.Schema({
       "detail": String
     }
   ],
-  "details_img": String,
+  "details_img": Array,
   "shelf_time": Number,
   "sold_count": Number,
   "stock": Number,
