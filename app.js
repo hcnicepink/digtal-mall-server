@@ -13,7 +13,7 @@ let goodsRouter = require('./routes/goods')
 let app = express()
 
 // 连接数据库
-mongoose.connect('mongodb://127.0.0.1:27017/digtalMall')
+mongoose.connect('mongodb://root:123456@127.0.0.1:27017/digtalMall')
 
 mongoose.connection.on('connected', () => {
   console.log('MongoDB Connected!')
