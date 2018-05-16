@@ -8,7 +8,7 @@ let checkToken = require('./util/checkToken')
 
 let indexRouter = require('./routes/index')
 let userRouter = require('./routes/user')
-let listRouter = require('./routes/list')
+let goodsRouter = require('./routes/goods')
 
 let app = express()
 
@@ -53,7 +53,7 @@ app.use((req, res, next) => {
 
 app.use('/', indexRouter)
 app.use('/user', userRouter)
-app.use('/list', listRouter)
+app.use('/goods', goodsRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
