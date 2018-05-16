@@ -1,0 +1,5 @@
+{"_id":{"$oid":"5afbcc6d29425a1814bac4f1"},"name":"手机"}
+{"_id":{"$oid":"5afbcc7d29425a1814bac4f2"},"name":"笔记本"}
+{"_id":{"$oid":"5afbcc8829425a1814bac4f3"},"name":"摄影摄像"}
+{"_id":{"$oid":"5afbcc9429425a1814bac4f4"},"name":"数码配件"}
+{"_id":{"$oid":"5afbcca029425a1814bac4f5"},"name":"智能配件"}

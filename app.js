@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use((req, res, next) => {
   if(checkToken(req.cookies.digtaltoken) === false) {
-    if (req.path.indexOf('/user') !== -1 || req.path === '/carousel' || req.path === '/list/hot') {
+    if (req.path.indexOf('/user') !== -1 || req.path === '/carousel'|| req.path === '/category' || req.path.indexOf('/list') !== -1) {
       next()
     } else {
       res.json({

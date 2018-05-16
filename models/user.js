@@ -48,7 +48,7 @@ let userSchema = new mongoose.Schema({
             "price": Number,
             "spec": String,
             "pic": {
-              sm: String,
+              "sm": String,
               "md": String,
               "lg": String
             },
@@ -64,7 +64,7 @@ let userSchema = new mongoose.Schema({
             "price": Number,
             "spec": String,
             "pic": {
-              sm: String,
+              "sm": String,
               "md": String,
               "lg": String
             },

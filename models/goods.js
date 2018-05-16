@@ -1,7 +1,10 @@
 let mongoose = require('mongoose')
 
-let goodsSchema = mongoose.Schema({
-  "category": String,
+let goodsSchema = new mongoose.Schema({
+  "category": {
+    "_id": mongoose.Schema.Types.ObjectId,
+    'name': String
+  },
   "title": String,
   "subtitle": String,
   "price": Number,
