@@ -30,7 +30,10 @@ let goodsSchema = new mongoose.Schema({
     }
   ],
   "discount": Number,
-  "brand": String
+  "brand": {
+    "_id": mongoose.Schema.Types.ObjectId,
+    "name": String
+  }
 })
 
 module.exports = mongoose.model('goods', goodsSchema, 'goods')

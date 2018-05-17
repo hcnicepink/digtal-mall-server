@@ -5,4 +5,4 @@ let brandSchema = new mongoose.Schema({
   "name": String
 })
 
-module.exports = mongoose.Model('brand', brandSchema, 'brand')
+module.exports = mongoose.model('brand', brandSchema, 'brand')
