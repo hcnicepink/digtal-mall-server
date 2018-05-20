@@ -6,15 +6,24 @@ let mongoose = require('mongoose')
 
 router.get('/', (req, res, next) => {
   let query = {}
-  let page = 0
+  let page = 1
+  let pageSize = 8
+  let skip = (page - 1) * pageSize
+  let sort = {}
   if (typeof req.query.categoryid !== 'undefined') {
     query['category._id'] = req.query.categoryid
   }
   if (typeof req.query.brandid !== 'undefined') {
     query['brand._id'] = req.query.brandid
   }
+  if (typeof req.query.haveStock !== 'undefined') {
+    query['stock'] = {$gt: 0}
+  }
   if (typeof req.query.page !== 'undefined') {
     page = parseInt(req.query.page)
+  }
+  if (typeof req.query.pageSize !== 'undefined') {
+    page = parseInt(req.query.pageSize)
   }
   if (typeof req.query.priceRange !== 'undefined') {
     switch (parseInt(req.query.priceRange)) {
@@ -33,8 +42,10 @@ router.get('/', (req, res, next) => {
   if (typeof req.query.keyword !== 'undefined') {
     query.title = {$regex: req.query.keyword}
   }
-  console.log(query)
-  Goods.find(query, (err, doc) => {
+  if (typeof req.query.sortType !== 'undefined' && typeof req.query.sortFlag !=='undefined') {
+    sort[req.query.sortType] = req.query.sortFlag 
+  }
+  Goods.find(query).skip(skip).limit(pageSize).sort(sort).exec((err, doc) => {
     if (err) {
       res.json({
         code: 500,
