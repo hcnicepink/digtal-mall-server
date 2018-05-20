@@ -62,6 +62,24 @@ router.get('/', (req, res, next) => {
   })
 })
 
+router.get('/detail', (req, res, next) => {
+  Goods.findById(req.query.id, (err, doc) => {
+    if (err) {
+      res.json({
+        code: 500,
+        msg: err,
+        result: null
+      })
+    } else {
+      res.json({
+        code: 200,
+        msg: "Success",
+        result: doc
+      })
+    }
+  })
+})
+
 router.get('/hot', (req, res, next) => {
   Goods.find({sold_count: {$gte: 9}}, (err, doc) => {
     if (err) {
