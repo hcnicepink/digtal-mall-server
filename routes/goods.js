@@ -71,10 +71,23 @@ router.get('/detail', (req, res, next) => {
         result: null
       })
     } else {
-      res.json({
-        code: 200,
-        msg: "Success",
-        result: doc
+      Goods.find({name: '华为 HUAWEI P20'}, (err, doc1) => {
+        if (err) {
+          res.json({
+            code: 500,
+            msg: err,
+            result: null
+          })
+        } else {
+          res.json({
+            code: 200,
+            msg: "Success",
+            result: {
+              detail: doc,
+              spec: doc1
+            }
+          })
+        }
       })
     }
   })
