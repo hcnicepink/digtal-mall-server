@@ -3,7 +3,6 @@ let mongoose = require('mongoose')
 let userSchema = new mongoose.Schema({
   "email": String,
   "pwd": String,
-  "orderList": Array,
   "phone": String,
   "avatar": String,
   "nickname": String,
@@ -75,8 +74,7 @@ let userSchema = new mongoose.Schema({
         }
       ]
     }
-  ],
-  "cartList": Array
+  ]
 })
 
 module.exports = mongoose.model('user', userSchema, 'user')

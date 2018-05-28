@@ -85,6 +85,10 @@ router.post('/register', (req, res, next) => {
   let params = {
     email: req.body.username,
     pwd: req.body.password,
+    phone: '',
+    avatar: '',
+    nickname: '',
+    gender: 0,
     orderList: [],
     cartList: [],
     addressList: []
@@ -149,21 +153,43 @@ router.get('/checkLogin', (req, res, next) => {
       result: null
     })
   } else {
-    res.json({
-      code: 200,
-      msg: '登录中',
-      result: checkResult
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
+        res.json({
+          code: 200,
+          msg: '登录中',
+          result: {
+            userEmail: checkResult,
+            userInfo: {
+              email: doc.email,
+              phone: doc.phone,
+              avatar: doc.avatar,
+              nickname: doc.nickname,
+              gender: doc.gender,
+            }
+          }
+        })
+      }
     })
   }
 })
 
+// 头像上传
 router.post('/uploadAvatar', (req, res, next) => {
   let busboy = new Busboy({ headers: req.headers })
+  let checkResult = checkToken(req.cookies.digtaltoken)
   busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
     console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype)
 
     let saveTo = path.join(__dirname, '../public/images/avatar',path.basename(fieldname))
     file.pipe(fs.createWriteStream(saveTo))
+    User.updateOne({'email': checkResult}, {'avatar': `http://localhost:3000/images/avatar/${fieldname}`}, (err, raw) => {})
 
     file.on('data', function(data) {
       console.log('File [' + fieldname + '] got ' + data.length + ' bytes')
@@ -177,12 +203,23 @@ router.post('/uploadAvatar', (req, res, next) => {
   })
   busboy.on('finish', function() {
     console.log('Done parsing form!')
-    res.json({
-      code: 200,
-      msg: 'good boy',
-      result: null
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
+        res.json({
+          code: 200,
+          msg: 'success',
+          result: doc.avatar
+        })
+      }
     })
   });
   req.pipe(busboy)
 })
+
 module.exports = router
