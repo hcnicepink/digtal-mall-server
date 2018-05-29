@@ -94,7 +94,7 @@ router.post('/register', (req, res, next) => {
     addressList: []
   }
 
-  if (/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(params.email) && /\w{5,17}$/.test(params.pwd)) {
+  if (/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(params.email) && /\w{6,18}$/.test(params.pwd)) {
     User.findOne({ email: params.email }, (err, doc) => {
       if (doc) {
         res.json({
@@ -220,6 +220,82 @@ router.post('/uploadAvatar', (req, res, next) => {
     })
   });
   req.pipe(busboy)
+})
+
+// 更新个人信息
+router.post('/updateUserInfo', (req, res, next) => {
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '更新失败',
+      result: null
+    })
+    next()
+  }
+  let params = req.body
+  if (/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(params.phone)
+  && /^.{1,10}$/.test(params.nickname)
+  && (parseInt(params.gender) === 0 || 1 || 2)
+  && params.oldPassword === ''
+  && params.newPassword === '') {
+    User.updateOne({'email': checkResult}, {'phone': params.phone, 'nickname': params.nickname, 'gender': parseInt(params.gender)}, (err, raw) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: '服务器错误',
+          result: null
+        })
+      } else {
+        res.json({
+          code: 200,
+          msg: '更新成功',
+          result: null
+        })
+      }
+    })
+  } else if (/\w{6,18}$/.test(params.oldPassword)
+  && /\w{6,18}$/.test(params.newPassword)) {
+    // 更新密码
+    let [hash1, hash2] = [crypto.createHash('sha512'), crypto.createHash('sha512')]
+    params.oldPassword = hash2.update((hash1.update(params.oldPassword).digest('hex') + salt)).digest('hex')
+    
+    let [hash3, hash4] = [crypto.createHash('sha512'), crypto.createHash('sha512')]
+    params.newPassword = hash4.update((hash3.update(params.newPassword).digest('hex') + salt)).digest('hex')
+
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (params.oldPassword === doc.pwd) {
+        doc.pwd = params.newPassword
+        doc.save((err, doc) => {
+          if (err) {
+            res.json({
+              code: 500,
+              msg: '服务器错误',
+              result: null
+            })
+          } else {
+            res.json({
+              code: 200,
+              msg: '更新成功',
+              result: null
+            })
+          }
+        })
+      } else {
+        res.json({
+          code: 201,
+          msg: '更新失败，旧密码错误！',
+          result: null
+        })
+      }
+    })
+  } else {
+    res.json({
+      code: 201,
+      msg: '更新失败，请检查格式后重试！',
+      result: null
+    })
+  }
 })
 
 module.exports = router
