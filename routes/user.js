@@ -235,7 +235,7 @@ router.post('/updateUserInfo', (req, res, next) => {
   }
   let params = req.body
   if (/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(params.phone)
-  && /^.{1,10}$/.test(params.nickname)
+  && /^[\u4E00-\u9FA5A-Za-z0-9_]{1,10}$/.test(params.nickname)
   && (parseInt(params.gender) === 0 || 1 || 2)
   && params.oldPassword === ''
   && params.newPassword === '') {
@@ -310,54 +310,163 @@ router.post('/addAddress', (req, res, next) => {
     || params.county === ''
     || params.detailAddress === ''
     || params.isDefault === ''
-    || !/\w{0,15}$/.test(params.name)
-    || !/\w{4,15}$/.test(params.detailAddress)
+    || !/[\u4E00-\u9FA5A-Za-z0-9_]{0,15}$/.test(params.name)
+    || !/[\u4E00-\u9FA5A-Za-z0-9_]{4,15}$/.test(params.detailAddress)
     || !/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(params.phone)) {
     res.json({
       code: 201,
       msg: '更新失败',
       result: null
     })
-    next()
+  } else {
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
+        if (params.isDefault === true) {
+          for (let i = 0; i < doc.addressList.length; i++) {
+            doc.addressList[i].is_default = false
+          }
+        }
+        doc.addressList.push({
+          receiver: params.name,
+          cellphone: params.phone,
+          province: params.province,
+          city: params.city,
+          county: params.county,
+          address: params.detailAddress,
+          is_default: params.isDefault
+        })
+        doc.save((err, doc) => {
+          if (err) {
+            res.json({
+              code: 500,
+              msg: err,
+              result: null
+            })
+          } else {
+            res.json({
+              code: 200,
+              msg: '添加成功',
+              result: doc.addressList
+            })
+          }
+        })
+      }
+    })
   }
-  User.findOne({'email': checkResult}, (err, doc) => {
-    if (err) {
-      res.json({
-        code: 500,
-        msg: err,
-        result: null
-      })
-    } else {
-      if (params.isDefault === true) {
+})
+
+// 获取地址信息
+router.get('/getAddress', (req, res, next) => {
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '获取地址失败',
+      result: null
+    })
+  } else {
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
+        res.json({
+          code: 200,
+          msg: '获取地址成功',
+          result: doc.addressList
+        })
+      }
+    })
+  }
+})
+
+// 删除地址信息
+router.post('/deleteAddress', (req, res, next) => {
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '获取地址失败',
+      result: null
+    })
+  } else {
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
+        doc.addressList.splice(req.body.index, 1)
+        doc.save((err, doc) => {
+          if (err) {
+            res.json({
+              code: 500,
+              msg: err,
+              result: null
+            })
+          } else {
+            res.json({
+              code: 200,
+              msg: '删除成功',
+              result: doc.addressList
+            })
+          }
+        })
+      }
+    })
+  }
+})
+
+// 设置默认地址
+router.post('/setAddressDefault', (req, res, next) => {
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '获取地址失败',
+      result: null
+    })
+  } else {
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
         for (let i = 0; i < doc.addressList.length; i++) {
           doc.addressList[i].is_default = false
         }
+        doc.addressList[req.body.index].is_default = true
+        doc.save((err, doc) => {
+          if (err) {
+            res.json({
+              code: 500,
+              msg: err,
+              result: null
+            })
+          } else {
+            res.json({
+              code: 200,
+              msg: '设置成功',
+              result: doc.addressList
+            })
+          }
+        })
       }
-      doc.addressList.push({
-        receiver: params.name,
-        cellphone: params.phone,
-        province: params.province,
-        city: params.city,
-        county: params.county,
-        address: params.detailAddress,
-        is_default: params.isDefault
-      })
-      doc.save((err, doc) => {
-        if (err) {
-          res.json({
-            code: 500,
-            msg: err,
-            result: null
-          })
-        } else {
-          res.json({
-            code: 200,
-            msg: '添加成功',
-            result: null
-          })
-        }
-      })
-    }
-  })
+    })
+  }
 })
 module.exports = router
