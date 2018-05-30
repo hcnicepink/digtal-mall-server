@@ -310,9 +310,10 @@ router.post('/addAddress', (req, res, next) => {
     || params.county === ''
     || params.detailAddress === ''
     || params.isDefault === ''
-    || !/[\u4E00-\u9FA5A-Za-z0-9_]{0,15}$/.test(params.name)
+    || !/[\u4E00-\u9FA5A-Za-z0-9_]{1,15}$/.test(params.name)
     || !/[\u4E00-\u9FA5A-Za-z0-9_]{4,15}$/.test(params.detailAddress)
     || !/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(params.phone)) {
+      console.log(!/[\u4E00-\u9FA5A-Za-z0-9_]{4,15}$/.test(params.detailAddress))
     res.json({
       code: 201,
       msg: '更新失败',
