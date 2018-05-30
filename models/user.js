@@ -60,6 +60,7 @@ let userSchema = new mongoose.Schema({
   "cartList": [
     {
       "goods": {
+        "_id": mongoose.Schema.Types.ObjectId,
         "title": String,
         "price": Number,
         "spec": String,

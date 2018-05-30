@@ -470,4 +470,69 @@ router.post('/setAddressDefault', (req, res, next) => {
   }
 })
 
+
+// 添加购物车
+router.post('/addCart', (req, res, next) => {
+  let params = req.body
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  let flag = true
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '加入失败',
+      result: null
+    })
+  } else {
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
+        for (let i = 0; i < doc.cartList.length; i++) {
+          if (doc.cartList[i].goods._id.toString() === params.goods._id) {
+            flag = false
+            doc.cartList[i].count += params.count
+            doc.save((err, doc) => {
+              if (err) {
+                res.json({
+                  code: 500,
+                  msg: err,
+                  result: null
+                })
+              } else {
+                res.json({
+                  code: 200,
+                  msg: '添加成功',
+                  result: null
+                })
+              }
+            })
+            break
+          }
+        }
+        if (flag === true) {
+          doc.cartList.push(params)
+          doc.save((err, doc) => {
+            if (err) {
+              res.json({
+                code: 500,
+                msg: err,
+                result: null
+              })
+            } else {
+              res.json({
+                code: 200,
+                msg: '添加成功',
+                result: null
+              })
+            }
+          })
+        }
+      }
+    })
+  }
+})
 module.exports = router
