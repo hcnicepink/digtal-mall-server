@@ -298,4 +298,66 @@ router.post('/updateUserInfo', (req, res, next) => {
   }
 })
 
+// 新增地址信息
+router.post('/addAddress', (req, res, next) => {
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  let params = req.body
+  if (checkResult === false
+    || params.name === ''
+    || params.phone === ''
+    || params.province === ''
+    || params.city === ''
+    || params.county === ''
+    || params.detailAddress === ''
+    || params.isDefault === ''
+    || !/\w{0,15}$/.test(params.name)
+    || !/\w{4,15}$/.test(params.detailAddress)
+    || !/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(params.phone)) {
+    res.json({
+      code: 201,
+      msg: '更新失败',
+      result: null
+    })
+    next()
+  }
+  User.findOne({'email': checkResult}, (err, doc) => {
+    if (err) {
+      res.json({
+        code: 500,
+        msg: err,
+        result: null
+      })
+    } else {
+      if (params.isDefault === true) {
+        for (let i = 0; i < doc.addressList.length; i++) {
+          doc.addressList[i].is_default = false
+        }
+      }
+      doc.addressList.push({
+        receiver: params.name,
+        cellphone: params.phone,
+        province: params.province,
+        city: params.city,
+        county: params.county,
+        address: params.detailAddress,
+        is_default: params.isDefault
+      })
+      doc.save((err, doc) => {
+        if (err) {
+          res.json({
+            code: 500,
+            msg: err,
+            result: null
+          })
+        } else {
+          res.json({
+            code: 200,
+            msg: '添加成功',
+            result: null
+          })
+        }
+      })
+    }
+  })
+})
 module.exports = router
