@@ -14,7 +14,6 @@ let userSchema = new mongoose.Schema({
       "city": String,
       "county": String,
       "address": String,
-      "address": String,
       "cellphone": String,
       "postcode": String,
       "tag": String,
@@ -55,24 +54,24 @@ let userSchema = new mongoose.Schema({
           },
           "count": Number
         }
-      ],
-      "cartList": [
-        {
-          "goods": {
-            "title": String,
-            "price": Number,
-            "spec": String,
-            "pic": {
-              "sm": String,
-              "md": String,
-              "lg": String
-            },
-            "href": String
-          },
-          "count": Number,
-          "is_check": Boolean
-        }
       ]
+    }
+  ],
+  "cartList": [
+    {
+      "goods": {
+        "title": String,
+        "price": Number,
+        "spec": String,
+        "pic": {
+          "sm": String,
+          "md": String,
+          "lg": String
+        },
+        "href": String
+      },
+      "count": Number,
+      "is_check": Boolean
     }
   ]
 })

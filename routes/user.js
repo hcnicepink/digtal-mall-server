@@ -298,4 +298,63 @@ router.post('/updateUserInfo', (req, res, next) => {
   }
 })
 
+// 新增地址信息
+router.post('/addAddress', (req, res, next) => {
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  let params = req.body
+  if (checkResult === false
+    || params.name === ''
+    || params.phone === ''
+    || params.province === ''
+    || params.city === ''
+    || params.county === ''
+    || params.detailAddress === ''
+    || params.isDefault === '') {
+    res.json({
+      code: 201,
+      msg: '更新失败',
+      result: null
+    })
+    next()
+  }
+  User.findOne({'email': checkResult}, (err, doc) => {
+    if (err) {
+      res.json({
+        code: 500,
+        msg: err,
+        result: null
+      })
+    } else {
+      if (params.isDefault === true) {
+        for (let i = 0; i < doc.addressList.length; i++) {
+          doc.addressList[i].is_default = false
+        }
+      }
+      doc.addressList.push({
+        receiver: params.name,
+        cellphone: params.phone,
+        province: params.province,
+        city: params.city,
+        county: params.county,
+        address: params.detailAddress,
+        is_default: params.isDefault
+      })
+      doc.save((err, doc) => {
+        if (err) {
+          res.json({
+            code: 500,
+            msg: err,
+            result: null
+          })
+        } else {
+          res.json({
+            code: 200,
+            msg: '添加成功',
+            result: null
+          })
+        }
+      })
+    }
+  })
+})
 module.exports = router
