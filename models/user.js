@@ -61,14 +61,16 @@ let userSchema = new mongoose.Schema({
     {
       "goods": {
         "_id": mongoose.Schema.Types.ObjectId,
-        "title": String,
+        "name": String,
         "price": Number,
         "spec": String,
-        "pic": {
-          "sm": String,
-          "md": String,
-          "lg": String
-        },
+        "pic": [
+          {
+            "sm": String,
+            "md": String,
+            "lg": String
+          }
+        ],
         "href": String
       },
       "count": Number,

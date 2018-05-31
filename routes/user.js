@@ -172,7 +172,8 @@ router.get('/checkLogin', (req, res, next) => {
               avatar: doc.avatar,
               nickname: doc.nickname,
               gender: doc.gender,
-            }
+            },
+            cartList: doc.cartList
           }
         })
       }
@@ -506,7 +507,7 @@ router.post('/addCart', (req, res, next) => {
                 res.json({
                   code: 200,
                   msg: '添加成功',
-                  result: null
+                  result: doc.cartList
                 })
               }
             })
@@ -526,11 +527,51 @@ router.post('/addCart', (req, res, next) => {
               res.json({
                 code: 200,
                 msg: '添加成功',
-                result: null
+                result: doc.cartList
               })
             }
           })
         }
+      }
+    })
+  }
+})
+
+// 更新购物车
+router.post('/updateCart', (req, res, next) => {
+  let params = req.body
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '更新失败',
+      result: null
+    })
+  } else {
+    User.findOne({'email': checkResult}, (err, doc) => {
+      if (err) {
+        res.json({
+          code: 500,
+          msg: err,
+          result: null
+        })
+      } else {
+        doc.cartList = params
+        doc.save((err, doc) => {
+          if (err) {
+            res.json({
+              code: 500,
+              msg: err,
+              result: null
+            })
+          } else {
+            res.json({
+              code: 200,
+              msg: '更新成功',
+              result: doc.cartList
+            })
+          }
+        })
       }
     })
   }
