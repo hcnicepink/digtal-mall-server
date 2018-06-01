@@ -173,7 +173,8 @@ router.get('/checkLogin', (req, res, next) => {
               nickname: doc.nickname,
               gender: doc.gender,
             },
-            cartList: doc.cartList
+            cartList: doc.cartList,
+            addressList: doc.addressList
           }
         })
       }

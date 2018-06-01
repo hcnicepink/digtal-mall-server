@@ -9,6 +9,7 @@ let userSchema = new mongoose.Schema({
   "gender": Number,
   "addressList": [
     {
+      "_id": mongoose.Schema.Types.ObjectId,
       "receiver": String,
       "province": String,
       "city": String,
@@ -22,6 +23,7 @@ let userSchema = new mongoose.Schema({
   ],
   "orderList": [
     {
+      "_id": mongoose.Schema.Types.ObjectId,
       "address": {
         "receiver": String,
         "province": String,
