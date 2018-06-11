@@ -23,7 +23,7 @@ let userSchema = new mongoose.Schema({
   ],
   "orderList": [
     {
-      "_id": mongoose.Schema.Types.ObjectId,
+      "order_id": String,
       "address": {
         "receiver": String,
         "province": String,
@@ -44,6 +44,7 @@ let userSchema = new mongoose.Schema({
       "detailList": [
         {
           "goods": {
+            "_id": mongoose.Schema.Types.ObjectId,
             "title": String,
             "price": Number,
             "spec": String,

@@ -577,4 +577,76 @@ router.post('/updateCart', (req, res, next) => {
     })
   }
 })
+
+// 创建订单
+router.post('/orderConfirm', (req, res, next) => {
+  let params = req.body
+  let checkResult = checkToken(req.cookies.digtaltoken)
+  if (checkResult === false) {
+    res.json({
+      code: 201,
+      msg: '更新失败',
+      result: null
+    })
+  } else {
+    User.findOne({'email': checkResult}, (err, doc) => {
+      let order = {
+        order_id: Date.now() + '' + Math.floor(Math.random() * 8999 + 1000),
+        status: 0,
+        order_time: Date.now(),
+        pay_time: Date.now(),
+        address: params.address,
+        detailList: []
+      }
+      let total = 0
+      doc.cartList.forEach(elem => {
+        if (elem.is_check === true) {
+          total += elem.goods.price * elem.count
+        }
+      })
+      doc.cartList.forEach((elem, index) => {
+        // 向订单中push商品
+        if (elem.is_check === true) {
+          order.detailList.push({
+            goods: {
+              _id: elem.goods._id,
+              name: elem.goods.name,
+              price: elem.goods.price,
+              spec: elem.goods.spec,
+              pic: elem.goods.pic,
+              href: elem.goods.href
+            },
+            count: elem.count
+          })
+        }
+      })
+      // 剔除购物车中选中的元素
+      for (let i = 0; i < doc.cartList.length; i++) {
+        if (doc.cartList[i].is_check === true) {
+          doc.cartList.splice(i--, 1)
+        }
+      }
+      doc.orderList.push(order)
+      doc.save((err, doc) => {
+        if (err) {
+          res.json({
+            code: 201,
+            msg: err,
+            result: null
+          })
+        } else {
+          res.json({
+            code: 200,
+            msg: '下单成功',
+            result: {
+              id: order.order_id,
+              total: total
+            }
+          })
+        }
+      })
+    })
+  }
+})
+
 module.exports = router
